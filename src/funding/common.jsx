@@ -46,10 +46,11 @@ export type LabelOptions = {|
     personalization : ?Personalization,
     nonce : ?string,
     tagline : ?boolean,
-    content : ?ContentType
+    content : ?ContentType,
+    experiment? : Experiment
 |};
 
-export type AnimatedExperimentLabelOptions = {|
+export type DesignExperimentLabelOptions = {|
     i : number,
     logo : ChildType,
     label : ?$Values<typeof BUTTON_LABEL>,
@@ -66,7 +67,7 @@ export type AnimatedExperimentLabelOptions = {|
     nonce : ?string,
     tagline : ?boolean,
     content : ?ContentType,
-    buttonAnimationComponent : ?ChildType
+    buttonDesignComponent : ?ChildType
 |};
 
 export type WalletLabelOptions = {|

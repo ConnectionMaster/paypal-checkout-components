@@ -1,3 +1,39 @@
+## <small>5.0.194 (2022-01-26)</small>
+
+* adding partnerattributionid to payment fields (#1841) ([fb26a01](https://github.com/paypal/paypal-checkout-components/commit/fb26a01)), closes [#1841](https://github.com/paypal/paypal-checkout-components/issues/1841)
+
+
+
+## <small>5.0.193 (2022-01-19)</small>
+
+* Revert "Revert "Add button size query param prop (#1836)" (#1840)" (#1846) ([83f31d7](https://github.com/paypal/paypal-checkout-components/commit/83f31d7)), closes [#1836](https://github.com/paypal/paypal-checkout-components/issues/1836) [#1840](https://github.com/paypal/paypal-checkout-components/issues/1840) [#1846](https://github.com/paypal/paypal-checkout-components/issues/1846)
+
+
+
+## <small>5.0.192 (2022-01-14)</small>
+
+* Revert "Add button size query param prop (#1836)" (#1840) ([e014242](https://github.com/paypal/paypal-checkout-components/commit/e014242)), closes [#1836](https://github.com/paypal/paypal-checkout-components/issues/1836) [#1840](https://github.com/paypal/paypal-checkout-components/issues/1840)
+
+
+
+## <small>5.0.191 (2022-01-14)</small>
+
+* Add button size query param prop (#1836) ([f743611](https://github.com/paypal/paypal-checkout-components/commit/f743611)), closes [#1836](https://github.com/paypal/paypal-checkout-components/issues/1836)
+
+
+
+## <small>5.0.190 (2022-01-11)</small>
+
+* Add card holder name field (#1809) ([d892b09](https://github.com/paypal/paypal-checkout-components/commit/d892b09)), closes [#1809](https://github.com/paypal/paypal-checkout-components/issues/1809)
+
+
+
+## <small>5.0.189 (2021-11-16)</small>
+
+* Revert "paymentfields prerender bg update (#1791)" ([02558c5](https://github.com/paypal/paypal-checkout-components/commit/02558c5)), closes [#1791](https://github.com/paypal/paypal-checkout-components/issues/1791)
+
+
+
 ## <small>5.0.188 (2021-11-10)</small>
 
 * fix bug w/ server render of button animations (#1790) ([c665f73](https://github.com/paypal/paypal-checkout-components/commit/c665f73)), closes [#1790](https://github.com/paypal/paypal-checkout-components/issues/1790)

@@ -1,13 +1,14 @@
 /* @flow */
-import { supportsPopups as userAgentSupportsPopups, isAndroid, isChrome, isIos, isSafari, isSFVC, type Experiment, isDevice, isTablet } from 'belter/src';
-import { FUNDING } from '@paypal/sdk-constants/src';
-import { getEnableFunding, getDisableFunding, createExperiment, getFundingEligibility, getPlatform, getComponents } from '@paypal/sdk-client/src';
+import { supportsPopups as userAgentSupportsPopups, isAndroid, isChrome, isIos, isSafari, isSFVC, type Experiment, isDevice, isTablet, getElement } from 'belter/src';
+import { ENV, FUNDING } from '@paypal/sdk-constants/src';
+import { getEnableFunding, getDisableFunding, createExperiment, getFundingEligibility, getPlatform, getComponents, getEnv } from '@paypal/sdk-client/src';
 import { getRefinedFundingEligibility } from '@paypal/funding-components/src';
 
 import type { Experiment as EligibilityExperiment } from '../../types';
-import { BUTTON_FLOW } from '../../constants';
+import { BUTTON_FLOW, BUTTON_SIZE, BUTTON_LAYOUT } from '../../constants';
 import type { ApplePaySessionConfigRequest, CreateBillingAgreement, CreateSubscription, ButtonProps } from '../../ui/buttons/props';
 import { determineEligibleFunding } from '../../funding';
+import { BUTTON_SIZE_STYLE } from '../../ui/buttons/config';
 
 type DetermineFlowOptions = {|
     createBillingAgreement : CreateBillingAgreement,
@@ -121,7 +122,7 @@ export function createNoPaylaterExperiment(fundingSource : ?$Values<typeof FUNDI
         return;
     }
 
-    return createExperiment('disable_paylater', 10);
+    return createExperiment('disable_paylater', 0);
 }
 
 export function getNoPaylaterExperiment(fundingSource : ?$Values<typeof FUNDING>) : EligibilityExperiment {
@@ -132,6 +133,14 @@ export function getNoPaylaterExperiment(fundingSource : ?$Values<typeof FUNDING>
     const isExperimentEnabled = experiment && experiment.isEnabled();
     return {
         disablePaylater: Boolean((isExperimentEnabled || isDisableFundingPaylater))
+    };
+}
+
+export function getVenmoAppLabelExperiment() : EligibilityExperiment  {
+    const isEnvForTest = getEnv() === ENV.LOCAL || getEnv() === ENV.TEST || getEnv() === ENV.STAGE;
+    const isEnabledForTest = isEnvForTest ? window.localStorage.getItem('enable_venmo_app_label') : false;
+    return {
+        enableVenmoAppLabel: isEnabledForTest
     };
 }
 
@@ -189,6 +198,7 @@ export function applePaySession() : ?ApplePaySessionConfigRequest {
                 listeners.paymentauthorized({ payment });
             };
 
+            // eslint-disable-next-line unicorn/prefer-add-event-listener
             session.oncancel = () => {
                 listeners.cancel();
             };
@@ -219,5 +229,66 @@ export function applePaySession() : ?ApplePaySessionConfigRequest {
         };
     } catch (e) {
         return undefined;
+    }
+}
+
+export function getButtonExperiments (fundingSource : ?$Values<typeof FUNDING>) : EligibilityExperiment {
+    return {
+        ...getVenmoExperiment(),
+        ...getNoPaylaterExperiment(fundingSource),
+        ...getVenmoAppLabelExperiment()
+    };
+}
+
+export function getButtonSize (props : ButtonProps, container : string | HTMLElement | void) : string | void {
+    if (!container) {
+        return;
+    }
+
+    let containerWidth = 0;
+
+    if (typeof container === 'string') {
+        const containerElement = document.querySelector(container);
+        containerWidth = containerElement?.offsetWidth || 0;
+    } else {
+        containerWidth = getElement(container)?.offsetWidth;
+    }
+
+    const layout = props?.style?.layout || BUTTON_LAYOUT.HORIZONTAL;
+    const numButtonsRendered = props?.renderedButtons?.length || 1;
+    const {
+        tiny,
+        small,
+        medium,
+        large,
+        huge
+    } = BUTTON_SIZE_STYLE;
+
+    if (containerWidth) {
+        let buttonWidth = Math.min(containerWidth, 750);
+        const spaceBetweenHorizontalButtons = 8;
+        if (layout === BUTTON_LAYOUT.HORIZONTAL && numButtonsRendered === 2) {
+            buttonWidth = (buttonWidth - spaceBetweenHorizontalButtons) / 2;
+        }
+
+        if (tiny.minWidth <= buttonWidth && buttonWidth <= tiny.maxWidth) {
+            return BUTTON_SIZE.TINY;
+        }
+
+        if (small.minWidth < buttonWidth && buttonWidth <= small.maxWidth) {
+            return BUTTON_SIZE.SMALL;
+        }
+
+        if (medium.minWidth < buttonWidth && buttonWidth <= medium.maxWidth) {
+            return BUTTON_SIZE.MEDIUM;
+        }
+
+        if (large.minWidth < buttonWidth && buttonWidth <= large.maxWidth) {
+            return BUTTON_SIZE.LARGE;
+        }
+
+        if (huge.minWidth < buttonWidth) {
+            return BUTTON_SIZE.HUGE;
+        }
     }
 }
